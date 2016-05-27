@@ -12,13 +12,14 @@ Init::usage="Initialize variables"
 InitGraphs::usage="Initialize graphs"
 CallFunc::usage="Call a function"
 SetAngles::usage="Set angles of servos"
+ServoOriGraph::usage="Draw servo graph"
 
 
 Begin["`Private`"]
 
 
-ConnectNucleo[x_]:=
-Return[$dev=DeviceOpen["Serial", x]]
+ConnectNucleo[x_]:={
+Return[$dev=DeviceOpen["Serial", x]];}
 
 
 Init[]:=
@@ -138,12 +139,55 @@ If[code=="t", TFunc[]]
 
 
 SetAngles[x_]:=
-Module[{numservos=Length[x]},
+Module[{},
+(*Initialize values*)
+$numservos=Length[x];
+$angles=Array[0&,$numservos];
+$servocubes=Array[0&,$numservos+1];
+rectstats=Array[0&,$numservos+1];
+
+(*Check if angles are valid*)
+error=False;
+Do[
+If[x[[i]]>45||x[[i]]<-45,error=True,$angles[[i]]=x[[i]]];
+,{i,$numservos}];
+
+(*====================Servo orientation code start====================*)
+Print["Orientation: "];
+Do[
+$servocubes[[i]] = Rectangle[{0, (i-1)*4}, {1, (i-1)*4+3}];,
+{i,$numservos+1}];
+Do[
+rectstats[[i]]={0.5,3.5+(i-1)*4};,
+{i,$numservos+1}];
+Do[
+ Do[
+  $servocubes[[j]] = Rotate[$servocubes[[j]], $angles[[i-1]]Degree, rectstats[[i - 1]]];
+  rectstats[[j]] = RotationTransform[$angles[[i-1]]Degree, rectstats[[i - 1]]][rectstats[[j]]];
+  , {j, i, $numservos+1, 1}];
+ , {i, 2, $numservos+1, 1}];
+
+(*Eyes and tail for the snake*)
+eye1 = Rectangle[{0.2, 0.25}, {0.4, 0.5}];
+eye2 = Rectangle[{0.6, 0.25}, {0.8, 0.5}];
+g2 = Graphics[{Yellow, eye1, Yellow, eye2}];
+vec = Normalize[rectstats[[$numservos + 1]] - rectstats[[$numservos]]];
+tail = Line[{rectstats[[$numservos + 1]], rectstats[[$numservos + 1]] + vec}];
+g3 = Graphics[{White, Thick, tail}];
+servograph = Graphics[{RGBColor[1, 1, 1], $servocubes},Background->Black,PlotRange->{{-1 * $numservos * 5, $numservos * 5}, {0, $numservos * 7}}];
+Print[Show[servograph, g2, g3]];
+(*====================Servo orientation code end====================*)
+
+(*Set up string to send through serial
+  Format: "numservos, angle1, angle2, anglen;"*)
 str=ToString/@x;
-Part[str,numservos]=Part[str,numservos]<>";";
-DeviceWrite[$dev,StringJoin[Riffle[Join[{ToString[numservos]},str],","]]];
+Part[str,$numservos]=Part[str,$numservos]<>";";
+If[error,Print["Invalid angles"],DeviceWrite[$dev,StringJoin[Riffle[Join[{ToString[$numservos]},str],","]]]];
+Print["Sending: "];
+Print[StringJoin[Riffle[Join[{ToString[$numservos]},str],","]]];
+Print["Receiving: "];
 Pause[1];
-Return[FromCharacterCode[DeviceReadBuffer[$dev]]];
+If[error,Return[], Return[FromCharacterCode[DeviceReadBuffer[$dev]]]];
 ]
 
 
