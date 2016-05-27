@@ -10,6 +10,7 @@ BeginPackage["NucleoFramework`"]
 ConnectNucleo::usage="Connect to Nucleo"
 Init::usage="Initialize variables"
 InitGraphs::usage="Initialize graphs"
+InitIMUGraph::usage="Initialize IMU graph"
 CallFunc::usage="Call a function"
 SetAngles::usage="Set angles of servos"
 
@@ -51,6 +52,12 @@ Dynamic[Labeled[ListLinePlot[$gMXList, PlotRange->All,PlotRangeClipping->False, 
 Dynamic[Labeled[ListLinePlot[$gMYList, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium], "my"],UpdateInterval->1]
 Dynamic[Labeled[ListLinePlot[$gMZList, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium], "mz"],UpdateInterval->1]
 Dynamic[Labeled[ListLinePlot[{$gMXList, $gMYList, $gMZList}, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium, PlotLegends->{"mx","my", "mz"}],"magnetometer"],UpdateInterval->1]
+]
+
+
+InitIMUGraph[]:=
+Module[{},
+Dynamic[Graphics3D[GeometricTransformation[Cuboid[{-2,-2,-2},{2,2,2}],RotationTransform[roll Degree,{1,0,0}].RotationTransform[pitch Degree,{0,1,0}].RotationTransform[yaw Degree,{0,0,1}]],Axes->True,AxesOrigin->{0,0,0},Boxed->False,AxesLabel->{x,y,z},PlotRange->{{-6,6},{-6,6},{-6,6}}]]
 ]
 
 
@@ -130,10 +137,11 @@ AppendTo[$gMList,gM];
 
 CallFunc[code_]:=
 Module[{},
-If[code=="o", OFunc[]]
+(*If[code=="o", OFunc[]]
 If[code=="p", PFunc[]]
 If[code=="g", GFunc[]]
-If[code=="t", TFunc[]]
+If[code=="t", TFunc[]]*)
+Switch[code=="o", OFunc[], code=="p", PFunc[], code=="g", GFunc[], code=="t", TFunc[], _, "Invalid Input"]
 ]
 
 
