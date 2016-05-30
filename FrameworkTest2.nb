@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[      2035,         67]
-NotebookOptionsPosition[      1604,         48]
-NotebookOutlinePosition[      1957,         64]
-CellTagsIndexPosition[      1914,         61]
+NotebookDataLength[      2664,         78]
+NotebookOptionsPosition[      2196,         58]
+NotebookOutlinePosition[      2549,         74]
+CellTagsIndexPosition[      2506,         71]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -39,12 +39,22 @@ Cell[BoxData[
 
 Cell[BoxData[
  RowBox[{"NucleoFramework`InitGraphs", "[", "]"}]], "Input",
- CellChangeTimes->{{3.6730657866145763`*^9, 3.673065787420621*^9}}],
+ CellChangeTimes->{{3.6730657866145763`*^9, 3.673065787420621*^9}, {
+  3.673580562386774*^9, 3.67358056826274*^9}}],
 
 Cell[BoxData[
- RowBox[{"NucleoFramework`CallFunc", "[", "\"\<g\>\"", "]"}]], "Input",
+ RowBox[{"NucleoFramework`InitIMUGraph", "[", "]"}]], "Input",
+ CellChangeTimes->{{3.673576449632998*^9, 3.673576452072011*^9}}],
+
+Cell[BoxData[
+ RowBox[{"NucleoFramework`CallFunc", "[", "\"\<p\>\"", "]"}]], "Input",
  CellChangeTimes->{{3.673065803476429*^9, 3.673065809135256*^9}, {
-  3.673065843628838*^9, 3.673065862998528*^9}}]
+  3.673065843628838*^9, 3.673065862998528*^9}, {3.673576481670052*^9, 
+  3.6735764817479887`*^9}, {3.673576574720661*^9, 3.673576599770299*^9}, {
+  3.6735766342010717`*^9, 3.6735766477836323`*^9}, {3.6735767841616173`*^9, 
+  3.673576785391901*^9}, {3.6735769428082848`*^9, 3.673576943223968*^9}, {
+  3.673577380701274*^9, 3.6735773847492437`*^9}, {3.6735801799317007`*^9, 
+  3.673580180117753*^9}, {3.6735805235132723`*^9, 3.673580523863789*^9}}]
 },
 WindowSize->{720, 852},
 WindowMargins->{{0, Automatic}, {Automatic, 0}},
@@ -67,8 +77,9 @@ Cell[558, 20, 247, 4, 28, "Input"],
 Cell[808, 26, 126, 2, 28, "Input"],
 Cell[937, 30, 178, 3, 28, "Input"],
 Cell[1118, 35, 134, 2, 28, "Input"],
-Cell[1255, 39, 142, 2, 28, "Input"],
-Cell[1400, 43, 200, 3, 28, "Input"]
+Cell[1255, 39, 190, 3, 28, "Input"],
+Cell[1448, 44, 142, 2, 28, "Input"],
+Cell[1593, 48, 599, 8, 28, "Input"]
 }
 ]
 *)

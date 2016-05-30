@@ -25,40 +25,47 @@ Return[$dev=DeviceOpen["Serial", x]];}
 
 Init[]:=
 Module[{},
-$gGXList:={};
-$gGYList:={};
-$gGZList:={};
-$gAXList:={};
-$gAYList:={};
-$gAZList:={};
-$gMXList:={};
-$gMYList:={};
-$gMZList:={};
-$gMList:={};
+$gGXList={};
+$gGYList={};
+$gGZList={};
+$gAXList={};
+$gAYList={};
+$gAZList={};
+$gMXList={};
+$gMYList={};
+$gMZList={};
+$gMList={};
+$roll=0.0;
+$pitch=0.0;
+$yaw=0.0;
+$pov={0,0,Infinity};
 $writeCode="";
 ]
 
 
 InitGraphs[]:=
 Module[{},
-Dynamic[Labeled[ListLinePlot[{$gGXList}, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium], "gx"],UpdateInterval->1]
+(*Dynamic[Labeled[ListLinePlot[{$gGXList}, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium], "gx"],UpdateInterval->1]
 Dynamic[Labeled[ListLinePlot[$gGYList, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium], "gy"],UpdateInterval->1]
-Dynamic[Labeled[ListLinePlot[$gGZList, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium], "gz"],UpdateInterval->1]
+Dynamic[Labeled[ListLinePlot[$gGZList, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium], "gz"],UpdateInterval->1]*)
 Dynamic[Labeled[ListLinePlot[{$gGXList, $gGYList, $gGZList}, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium, PlotLegends->{"gx","gy", "gz"}],"gyroscope"],UpdateInterval->1]
-Dynamic[Labeled[ListLinePlot[$gAXList, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium], "ax"],UpdateInterval->1]
+(*Dynamic[Labeled[ListLinePlot[$gAXList, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium], "ax"],UpdateInterval->1]
 Dynamic[Labeled[ListLinePlot[$gAYList, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium], "ay"],UpdateInterval->1]
-Dynamic[Labeled[ListLinePlot[$gAZList, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium], "az"],UpdateInterval->1]
+Dynamic[Labeled[ListLinePlot[$gAZList, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium], "az"],UpdateInterval->1]*)
 Dynamic[Labeled[ListLinePlot[{$gAXList, $gAYList, $gAZList}, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium, PlotLegends->{"ax","ay", "az"}],"accelerometer"],UpdateInterval->1]
-Dynamic[Labeled[ListLinePlot[$gMXList, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium], "mx"],UpdateInterval->1]
+(*Dynamic[Labeled[ListLinePlot[$gMXList, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium], "mx"],UpdateInterval->1]
 Dynamic[Labeled[ListLinePlot[$gMYList, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium], "my"],UpdateInterval->1]
-Dynamic[Labeled[ListLinePlot[$gMZList, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium], "mz"],UpdateInterval->1]
+Dynamic[Labeled[ListLinePlot[$gMZList, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium], "mz"],UpdateInterval->1]*)
 Dynamic[Labeled[ListLinePlot[{$gMXList, $gMYList, $gMZList}, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium, PlotLegends->{"mx","my", "mz"}],"magnetometer"],UpdateInterval->1]
 ]
 
 
 InitIMUGraph[]:=
 Module[{},
-Dynamic[Graphics3D[GeometricTransformation[Cuboid[{-2,-2,-2},{2,2,2}],RotationTransform[roll Degree,{1,0,0}].RotationTransform[pitch Degree,{0,1,0}].RotationTransform[yaw Degree,{0,0,1}]],Axes->True,AxesOrigin->{0,0,0},Boxed->False,AxesLabel->{x,y,z},PlotRange->{{-6,6},{-6,6},{-6,6}}]]
+imu:=Graphics3D[Dynamic[GeometricTransformation[Cuboid[{-2,-2,-2},{2,2,2}],RotationTransform[$roll Degree,{1,0,0}].RotationTransform[$pitch Degree,{0,1,0}].RotationTransform[$yaw Degree,{0,0,1}]]],Axes->True,AxesOrigin->{0,0,0},Boxed->False,PlotRange->{{-6,6},{-6,6},{-6,6}},Ticks->None,ViewPoint->Dynamic[$pov]];
+axeslabel=Graphics3D[{Text[Style["x",Large], {7, 0, 0}], Text[Style["y",Large], {0, 7, 0}], Text[Style["z",Large], {0, 0, 7}]}];
+Labeled[Show[imu,axeslabel],"IMU"]
+RadioButtonBar[Dynamic[$pov],{{0,0,Infinity}->"Above",{0,0,-Infinity}->"Below",{0,-Infinity,0}->Front,{0,Infinity,0}->Back,{Infinity,0,0}->Right,{-Infinity,0,0}->Left}]
 ]
 
 
@@ -79,10 +86,10 @@ While[1<2,
 Pause[0.2];
 DeviceWrite[$dev, "p"];
 reader=FromCharacterCode[DeviceReadBuffer[$dev]];
-roll=ToExpression[Part[StringSplit[reader],1]];
-pitch=ToExpression[Part[StringSplit[reader],2]];
-yaw=ToExpression[Part[StringSplit[reader],3]];
-Print[reader];
+$roll=ToExpression[Part[StringSplit[reader],1]];
+$pitch=ToExpression[Part[StringSplit[reader],2]];
+$yaw=ToExpression[Part[StringSplit[reader],3]];
+(*Print[reader];*)
 ]
 ]
 
@@ -93,24 +100,24 @@ While[1<2,
 Pause[0.2];
 DeviceWrite[$dev, "g"];
 reader=FromCharacterCode[DeviceReadBuffer[$dev]];
-gString:=StringSplit[reader," "];
+gString=StringSplit[reader," "];
 If[Length[gString]!=20,Continue[]];
 gTime:=Part[gString, 2];
-gGX:=ToExpression[Part[gString, 4]];
-gGY:=ToExpression[Part[gString, 6]];
-gGZ:=ToExpression[Part[gString, 8]];
+gGX=ToExpression[Part[gString, 4]];
+gGY=ToExpression[Part[gString, 6]];
+gGZ=ToExpression[Part[gString, 8]];
 AppendTo[$gGXList,gGX];
 AppendTo[$gGYList,gGY];
 AppendTo[$gGZList,gGZ];
-gAX:=ToExpression[Part[gString, 10]];
-gAY:=ToExpression[Part[gString, 12]];
-gAZ:=ToExpression[Part[gString, 14]];
+gAX=ToExpression[Part[gString, 10]];
+gAY=ToExpression[Part[gString, 12]];
+gAZ=ToExpression[Part[gString, 14]];
 AppendTo[$gAXList,gAX];
 AppendTo[$gAYList,gAY];
 AppendTo[$gAZList,gAZ];
-gMX:=ToExpression[Part[gString, 16]];
-gMY:=ToExpression[Part[gString, 18]];
-gMZ:=ToExpression[Part[gString, 20]];
+gMX=ToExpression[Part[gString, 16]];
+gMY=ToExpression[Part[gString, 18]];
+gMZ=ToExpression[Part[gString, 20]];
 AppendTo[$gMXList,gMX];
 AppendTo[$gMYList,gMY];
 AppendTo[$gMZList,gMZ];
@@ -142,7 +149,7 @@ Module[{},
 If[code=="p", PFunc[]]
 If[code=="g", GFunc[]]
 If[code=="t", TFunc[]]*)
-Switch[code=="o", OFunc[], code=="p", PFunc[], code=="g", GFunc[], code=="t", TFunc[], _, "Invalid Input"]
+Which[code=="o", OFunc[],code=="p", PFunc[],code=="g", GFunc[],code=="t", TFunc[],True,"Invalid Input"]
 ]
 
 
