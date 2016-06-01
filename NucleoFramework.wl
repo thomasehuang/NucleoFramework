@@ -43,6 +43,16 @@ $pitch=0.0;
 $yaw=0.0;
 $pov={0,0,Infinity};
 $writeCode="";
+
+(*Flags*)
+$runprogram = False;
+$IMUflag = False;
+$gyrflag = False;
+$accflag = False;
+$magflag = False;
+$IMUgraphflag = False;
+
+(*Angles graph initialization*)
 $numservos=1;
 $angles={0};
 $servograph=Graphics[{RGBColor[0, 0, 0],{Rectangle[{0, 0},{1, 3}],Rectangle[{0, 4},{1, 7}]}},Background->White];
@@ -62,6 +72,15 @@ EnableMag[]:=Dynamic[Labeled[ListLinePlot[{$gMXList, $gMYList, $gMZList}, PlotRa
 
 
 EnableAngles[]:=Dynamic[Show[$servograph, $g2, $g3, $g4]]
+
+
+EnableIMU[]:=
+Module[{},
+imu:=Graphics3D[Dynamic[GeometricTransformation[Cuboid[{-2,-2,-2},{2,2,2}],RotationTransform[$roll Degree,{1,0,0}].RotationTransform[$pitch Degree,{0,1,0}].RotationTransform[$yaw Degree,{0,0,1}]]],ImageSize->Medium,Axes->True,AxesOrigin->{0,0,0},Boxed->False,PlotRange->{{-5,5},{-5,5},{-5,5}},Ticks->None,ViewPoint->Dynamic[$pov]];
+axeslabel=Graphics3D[{Text[Style["x",Large], {7, 0, 0}], Text[Style["y",Large], {0, 7, 0}], Text[Style["z",Large], {0, 0, 7}]}];
+Labeled[Show[imu,axeslabel],"IMU"]
+RadioButtonBar[Dynamic[$pov],{{0,0,Infinity}->"Above",{0,0,-Infinity}->"Below",{0,-Infinity,0}->Front,{0,Infinity,0}->Back,{Infinity,0,0}->Right,{-Infinity,0,0}->Left}]
+]
 
 
 SetAngles[]:=
@@ -102,38 +121,49 @@ $g4 = Graphics[{Red, angletext}];
 ]
 
 
-EnableIMU[]:=
-Module[{},
-imu:=Graphics3D[Dynamic[GeometricTransformation[Cuboid[{-2,-2,-2},{2,2,2}],RotationTransform[$roll Degree,{1,0,0}].RotationTransform[$pitch Degree,{0,1,0}].RotationTransform[$yaw Degree,{0,0,1}]]],ImageSize->Medium,Axes->True,AxesOrigin->{0,0,0},Boxed->False,PlotRange->{{-5,5},{-5,5},{-5,5}},Ticks->None,ViewPoint->Dynamic[$pov]];
-axeslabel=Graphics3D[{Text[Style["x",Large], {7, 0, 0}], Text[Style["y",Large], {0, 7, 0}], Text[Style["z",Large], {0, 0, 7}]}];
-Labeled[Show[imu,axeslabel],"IMU"]
-RadioButtonBar[Dynamic[$pov],{{0,0,Infinity}->"Above",{0,0,-Infinity}->"Below",{0,-Infinity,0}->Front,{0,Infinity,0}->Back,{Infinity,0,0}->Right,{-Infinity,0,0}->Left}]
-]
-
-
 ConstructIMUGUI[]:=
 Module[{},
 Print[Column[{
+Row[{
 Button["Enable Gyr",
  Print[EnableGyr[]];
  $IMUflag = True;
  $gyrflag = True;
 ],
+Button["Disable Gyr",
+ $gyrflag = False;
+ If[Not[$gyrflag]&&Not[$accflag]&&Not[$magflag]&&Not[$IMUgraphflag],$IMUflag = False,];
+]}],
+Row[{
 Button["Enable Acc",
  Print[EnableAcc[]];
  $IMUflag = True;
  $accflag = True;
 ],
+Button["Disable Acc",
+ $accflag = False;
+ If[Not[$gyrflag]&&Not[$accflag]&&Not[$magflag]&&Not[$IMUgraphflag],$IMUflag = False,];
+]}],
+Row[{
 Button["Enable Mag",
  Print[EnableMag[]];
  $IMUflag = True;
  $magflag = True;
 ],
+Button["Disable Mag",
+ $magflag = False;
+ If[Not[$gyrflag]&&Not[$accflag]&&Not[$magflag]&&Not[$IMUgraphflag],$IMUflag = False,];
+]}],
+Row[{
 Button["Enable IMU",
  Print[EnableIMU[]];
  $IMUflag = True;
  $IMUgraphflag = True;
 ],
+Button["Disable IMU",
+ $IMUgraphflag = False;
+ If[Not[$gyrflag]&&Not[$accflag]&&Not[$magflag]&&Not[$IMUgraphflag],$IMUflag = False,];
+]}],
 Button["Stop", 
  $runprogram = False;
  $IMUflag = False;
@@ -147,6 +177,8 @@ Button["Stop",
 
 ConstructServoGUI[]:=
 Module[{},
+numservosstring="3";
+anglestring="0,0,0";
 Print[Column[{
 Button["Enable Angles",
  Print[EnableAngles[]];
@@ -156,7 +188,17 @@ Panel[Grid[{{Style["Plot",Bold],SpanFromLeft},{"Number of Servos:",InputField[Dy
  $sendstring = "s"<>ToString[$numservos]<>","<>anglestring<>";";
  $angles = ToExpression/@StringSplit[anglestring, ","];
  SetAngles[];
- $anglesflag = True;]}}]]}]];
+ If[$runprogram,$anglesflag=True,DeviceWrite[$dev,$sendstring]];
+]}}]],
+Button["Stop",
+ $runprogram = False;
+ $IMUflag = False;
+ $gyrflag = False;
+ $accflag = False;
+ $magflag = False;
+ $IMUgraphflag = False;
+]
+}]];
 ]
 
 
