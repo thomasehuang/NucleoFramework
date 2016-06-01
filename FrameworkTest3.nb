@@ -10,16 +10,18 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[      1680,         59]
-NotebookOptionsPosition[      1289,         41]
-NotebookOutlinePosition[      1642,         57]
-CellTagsIndexPosition[      1599,         54]
+NotebookDataLength[      1825,         61]
+NotebookOptionsPosition[      1433,         43]
+NotebookOutlinePosition[      1786,         59]
+CellTagsIndexPosition[      1743,         56]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
 Cell[BoxData[
- RowBox[{"Needs", "[", "\"\<NucleoFramework`\>\"", "]"}]], "Input"],
+ RowBox[{"Needs", "[", "\"\<NucleoFramework`\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.6737440379491653`*^9, 3.673744038060676*^9}, {
+  3.67374428689419*^9, 3.673744287315786*^9}}],
 
 Cell[BoxData[
  RowBox[{"NucleoFramework`ConnectNucleo", "[", "\"\</dev/cu.usbmodem1413\>\"",
@@ -27,14 +29,14 @@ Cell[BoxData[
  CellChangeTimes->{{3.673056824687264*^9, 3.673056846828498*^9}}],
 
 Cell[BoxData[
- RowBox[{"NucleoFramework`Init", "[", "]"}]], "Input",
- CellChangeTimes->{{3.673671381544965*^9, 3.6736713853043633`*^9}}],
+ RowBox[{"NucleoFramework`Init", "[", "]"}]], "Input"],
 
 Cell[BoxData[
  RowBox[{"NucleoFramework`ConstructGUI", "[", "]"}]], "Input",
  CellChangeTimes->{{3.673667240681332*^9, 3.673667278110669*^9}, {
-  3.6736684670871153`*^9, 3.673668467326538*^9}, {3.673668797060822*^9, 
-  3.673668800371017*^9}}],
+   3.6736684670871153`*^9, 3.673668467326538*^9}, {3.673668797060822*^9, 
+   3.673668800371017*^9}, 3.673741916634789*^9, {3.673742015862926*^9, 
+   3.673742017494522*^9}, 3.673742155001748*^9}],
 
 Cell[BoxData[
  RowBox[{"NucleoFramework`ReadSerialData", "[", "]"}]], "Input"]
@@ -56,11 +58,11 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[558, 20, 81, 1, 28, "Input"],
-Cell[642, 23, 178, 3, 28, "Input"],
-Cell[823, 28, 136, 2, 28, "Input"],
-Cell[962, 32, 242, 4, 28, "Input"],
-Cell[1207, 38, 78, 1, 28, "Input"]
+Cell[558, 20, 197, 3, 28, "Input"],
+Cell[758, 25, 178, 3, 28, "Input"],
+Cell[939, 30, 68, 1, 28, "Input"],
+Cell[1010, 33, 338, 5, 28, "Input"],
+Cell[1351, 40, 78, 1, 28, "Input"]
 }
 ]
 *)

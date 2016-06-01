@@ -7,13 +7,15 @@
 BeginPackage["NucleoFramework`"];
 
 
+Init::usage="Initializes values";
 ConstructGUI::usage="Constructs user interface";
 ReadSerialData::usage="Reads data through serial";
 EnableGyr::usage="Enables gyroscope graph";
 EnableAcc::usage="Enables accelerometer graph";
 EnableMag::usage="Enables magnetometer graph";
 EnableIMU::usage="Enables IMU graph";
-EnableOri::usage="Enable orientation graph";
+EnableAngles::usage="Enable angles graph";
+SetAngles::usage="Sets angles for servos";
 
 
 Begin["`Private`"];
@@ -39,6 +41,8 @@ $pitch=0.0;
 $yaw=0.0;
 $pov={0,0,Infinity};
 $writeCode="";
+$numservos = 1;
+$angles = {0};
 ]
 
 
@@ -51,14 +55,16 @@ EnableAcc[]:=Dynamic[Labeled[ListLinePlot[{$gAXList, $gAYList, $gAZList}, PlotRa
 EnableMag[]:=Dynamic[Labeled[ListLinePlot[{$gMXList, $gMYList, $gMZList}, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium, PlotLegends->{"mx","my", "mz"}],"magnetometer"],UpdateInterval->1]
 
 
-EnableOri[]:=
+EnableAngles[]:=Dynamic[Show[$servograph, $g2, $g3, $g4]]
+
+
+SetAngles[]:=
 Module[{},
 (*Initialize values*)
 $servocubes = Array[0&, $numservos + 1];
 rectstats = Array[0&, $numservos + 1];
 angletext = Array[0&, $numservos];
 
-Print["Orientation: "];
 Do[
  $servocubes[[i]] = Rectangle[{0, (i - 1) * 4}, {1, (i - 1) * 4 + 3}];
 , {i, $numservos + 1}];
@@ -72,23 +78,21 @@ Do[
   rectstats[[j]] = RotationTransform[-$angles[[i - 1]]Degree, rectstats[[i - 1]]][rectstats[[j]]];
   , {j, i, $numservos + 1, 1}];
  , {i, 2, $numservos + 1, 1}];
-servograph = Graphics[{RGBColor[0, 0, 0], $servocubes},Background -> White,PlotRange -> {{-1 * $numservos * 5, $numservos * 5}, {0, $numservos * 6}}];
+$servograph = Graphics[{RGBColor[0, 0, 0], $servocubes},Background -> White,PlotRange -> {{-1 * $numservos * 5, $numservos * 5}, {0, $numservos * 6}}];
 
 (*Eyes and tail for the snake*)
 eye1 = Rectangle[{0.2, 0.25}, {0.4, 0.5}];
 eye2 = Rectangle[{0.6, 0.25}, {0.8, 0.5}];
-g2 = Graphics[{Yellow, eye1, Yellow, eye2}];
+$g2 = Graphics[{Yellow, eye1, Yellow, eye2}];
 vec = Normalize[rectstats[[$numservos + 1]] - rectstats[[$numservos]]];
 tail = Line[{rectstats[[$numservos + 1]], rectstats[[$numservos + 1]] + vec}];
-g3 = Graphics[{Black, Thick, tail}];
+$g3 = Graphics[{Black, Thick, tail}];
 
 (*Angles display with text*)
 Do[
  If[$angles[[i]] < 0, angletext[[i]] = Text[$angles[[i]], rectstats[[i]], {0, 0}], angletext[[i]] = Text[$angles[[i]], rectstats[[i]], {0, 0}]];
 , {i, $numservos}];
-g4 = Graphics[{Red, angletext}];
-
-Print[Show[servograph, g2, g3, g4]];
+$g4 = Graphics[{Red, angletext}];
 ]
 
 
@@ -103,32 +107,35 @@ RadioButtonBar[Dynamic[$pov],{{0,0,Infinity}->"Above",{0,0,-Infinity}->"Below",{
 
 ConstructGUI[]:=
 Module[{},
-Print[Column[{
-Button["Enable Gyr",
+Print[Button["Enable Gyr",
  Print[EnableGyr[]];
  $IMUflag = True;
  $gyrflag = True;
-],
-Button["Enable Acc",
+]];
+Print[Button["Enable Acc",
  Print[EnableAcc[]];
  $IMUflag = True;
  $accflag = True;
-],
-Button["Enable Mag",
+]];
+Print[Button["Enable Mag",
  Print[EnableMag[]];
  $IMUflag = True;
  $magflag = True;
-],
-Button["Enable IMU",
+]];
+Print[Button["Enable IMU",
  Print[EnableIMU[]];
  $IMUflag = True;
  $IMUgraphflag = True;
-],
-Panel[Grid[{{Style["Plot",Bold],SpanFromLeft},{"Number of Servos:",InputField[Dynamic[$numservos],String]},{"Angles:",InputField[Dynamic[anglestring],String]},{Button["Send",
- $numservos = ToExpression[$numservos];
+]];
+Print[Button["Enable Angles",
+ Print[EnableAngles[]];
+]];
+Print[Column[{
+Panel[Grid[{{Style["Plot",Bold],SpanFromLeft},{"Number of Servos:",InputField[Dynamic[numservosstring],String]},{"Angles:",InputField[Dynamic[anglestring],String]},{Button["Send",
+ $numservos = ToExpression[numservosstring];
  $sendstring = "s"<>ToString[$numservos]<>","<>anglestring<>";";
  $angles = ToExpression/@StringSplit[anglestring, ","];
- EnableOri[];
+ SetAngles[];
  $anglesflag = True;]}}]],
 Button["Stop", 
  $runprogram = False;
