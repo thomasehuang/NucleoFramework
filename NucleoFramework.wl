@@ -8,6 +8,7 @@ BeginPackage["NucleoFramework`"];
 
 
 Init::usage="Initializes values";
+ConnectNucleo::usage="Connect Nucleo";
 ConstructIMUGUI::usage="Constructs user interface for IMU";
 ConstructServoGUI::usage="Constructs user interface for Servo";
 ReadSerialData::usage="Reads data through serial";
@@ -42,13 +43,12 @@ $pitch=0.0;
 $yaw=0.0;
 $pov={0,0,Infinity};
 $writeCode="";
-$numservos = 1;
-$angles = {0};
-$servograph = Graphics[{RGBColor[0, 0, 0], Rectangle[{0, 0}, {1, 3}]},Background -> White];
-eye1 = Rectangle[{0.2, 0.25}, {0.4, 0.5}];
-eye2 = Rectangle[{0.6, 0.25}, {0.8, 0.5}];
-$g2 = Graphics[{Yellow, eye1, Yellow, eye2}];
-$g4 = Graphics[Rectangle[{0,0},{0,0}]];
+$numservos=1;
+$angles={0};
+$servograph=Graphics[{RGBColor[0, 0, 0],{Rectangle[{0, 0},{1, 3}],Rectangle[{0, 4},{1, 7}]}},Background->White];
+$g2=Graphics[{Yellow,Rectangle[{0.2, 0.25},{0.4,0.5}],Yellow,Rectangle[{0.6,0.25},{0.8,0.5}]}];
+$g3=Graphics[{Black,Thick,Line[{{0.5,7.5},{0.5,8.5}}]}];
+$g4=Graphics[{Red,Text[0, {0.5,3.5}, {0, 0}]}];
 ]
 
 
