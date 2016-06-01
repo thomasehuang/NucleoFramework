@@ -185,7 +185,7 @@ Button["Enable Angles",
 ],
 Panel[Grid[{{Style["Plot",Bold],SpanFromLeft},{"Number of Servos:",InputField[Dynamic[numservosstring],String]},{"Angles:",InputField[Dynamic[anglestring],String]},{Button["Send",
  $numservos = ToExpression[numservosstring];
- $sendstring = "s"<>ToString[$numservos]<>","<>anglestring<>";";
+ $sendstring = "1.0."<>ToString[$numservos]<>","<>anglestring<>";";
  $angles = ToExpression/@StringSplit[anglestring, ","];
  SetAngles[];
  If[$runprogram,$anglesflag=True,DeviceWrite[$dev,$sendstring]];
@@ -212,7 +212,7 @@ Module[{},
 	    ]];
         If[$IMUflag,Module[{},
         	DeviceReadBuffer[$dev];
-        	DeviceWrite[$dev, "g"];
+        	DeviceWrite[$dev, "1.1;"];
 			Pause[0.2];
             reader=FromCharacterCode[DeviceReadBuffer[$dev]];
             readerarr=StringSplit[reader];
