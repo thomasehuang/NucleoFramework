@@ -8,7 +8,8 @@ BeginPackage["NucleoFramework`"];
 
 
 Init::usage="Initializes values";
-ConstructGUI::usage="Constructs user interface";
+ConstructIMUGUI::usage="Constructs user interface for IMU";
+ConstructServoGUI::usage="Constructs user interface for Servo";
 ReadSerialData::usage="Reads data through serial";
 EnableGyr::usage="Enables gyroscope graph";
 EnableAcc::usage="Enables accelerometer graph";
@@ -43,6 +44,10 @@ $pov={0,0,Infinity};
 $writeCode="";
 $numservos = 1;
 $angles = {0};
+
+eye1 = Rectangle[{0.2, 0.25}, {0.4, 0.5}];
+eye2 = Rectangle[{0.6, 0.25}, {0.8, 0.5}];
+$g2 = Graphics[{Yellow, eye1, Yellow, eye2}];
 ]
 
 
@@ -105,38 +110,29 @@ RadioButtonBar[Dynamic[$pov],{{0,0,Infinity}->"Above",{0,0,-Infinity}->"Below",{
 ]
 
 
-ConstructGUI[]:=
+ConstructIMUGUI[]:=
 Module[{},
-Print[Button["Enable Gyr",
+Print[Column[{
+Button["Enable Gyr",
  Print[EnableGyr[]];
  $IMUflag = True;
  $gyrflag = True;
-]];
-Print[Button["Enable Acc",
+],
+Button["Enable Acc",
  Print[EnableAcc[]];
  $IMUflag = True;
  $accflag = True;
-]];
-Print[Button["Enable Mag",
+],
+Button["Enable Mag",
  Print[EnableMag[]];
  $IMUflag = True;
  $magflag = True;
-]];
-Print[Button["Enable IMU",
+],
+Button["Enable IMU",
  Print[EnableIMU[]];
  $IMUflag = True;
  $IMUgraphflag = True;
-]];
-Print[Button["Enable Angles",
- Print[EnableAngles[]];
-]];
-Print[Column[{
-Panel[Grid[{{Style["Plot",Bold],SpanFromLeft},{"Number of Servos:",InputField[Dynamic[numservosstring],String]},{"Angles:",InputField[Dynamic[anglestring],String]},{Button["Send",
- $numservos = ToExpression[numservosstring];
- $sendstring = "s"<>ToString[$numservos]<>","<>anglestring<>";";
- $angles = ToExpression/@StringSplit[anglestring, ","];
- SetAngles[];
- $anglesflag = True;]}}]],
+],
 Button["Stop", 
  $runprogram = False;
  $IMUflag = False;
@@ -144,7 +140,23 @@ Button["Stop",
  $accflag = False;
  $magflag = False;
  $IMUgraphflag = False;
-]}]];]
+]}]];
+]
+
+
+ConstructServoGUI[]:=
+Module[{},
+Print[Column[{
+Button["Enable Angles",
+ Print[EnableAngles[]];
+],
+Panel[Grid[{{Style["Plot",Bold],SpanFromLeft},{"Number of Servos:",InputField[Dynamic[numservosstring],String]},{"Angles:",InputField[Dynamic[anglestring],String]},{Button["Send",
+ $numservos = ToExpression[numservosstring];
+ $sendstring = "s"<>ToString[$numservos]<>","<>anglestring<>";";
+ $angles = ToExpression/@StringSplit[anglestring, ","];
+ SetAngles[];
+ $anglesflag = True;]}}]]}]];
+]
 
 
 ReadSerialData[]:=
