@@ -44,7 +44,7 @@ $pov={0,0,Infinity};
 $writeCode="";
 $numservos = 1;
 $angles = {0};
-$servograph = Graphics[{RGBColor[0, 0, 0], Rectangle[{0, 0}, {1, 3}]},Background -> White,PlotRange -> {{-5, 5}, {0, 6}}];
+$servograph = Graphics[{RGBColor[0, 0, 0], Rectangle[{0, 0}, {1, 3}]},Background -> White];
 eye1 = Rectangle[{0.2, 0.25}, {0.4, 0.5}];
 eye2 = Rectangle[{0.6, 0.25}, {0.8, 0.5}];
 $g2 = Graphics[{Yellow, eye1, Yellow, eye2}];
@@ -84,7 +84,7 @@ Do[
   rectstats[[j]] = RotationTransform[-$angles[[i - 1]]Degree, rectstats[[i - 1]]][rectstats[[j]]];
   , {j, i, $numservos + 1, 1}];
  , {i, 2, $numservos + 1, 1}];
-$servograph = Graphics[{RGBColor[0, 0, 0], $servocubes},Background -> White,PlotRange -> {{-1 * $numservos * 5, $numservos * 5}, {0, $numservos * 6}}];
+$servograph = Graphics[{RGBColor[0, 0, 0], $servocubes},Background -> White];
 
 (*Eyes and tail for the snake*)
 eye1 = Rectangle[{0.2, 0.25}, {0.4, 0.5}];
