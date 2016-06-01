@@ -44,10 +44,11 @@ $pov={0,0,Infinity};
 $writeCode="";
 $numservos = 1;
 $angles = {0};
-
+$servograph = Graphics[{RGBColor[0, 0, 0], Rectangle[{0, 0}, {1, 3}]},Background -> White,PlotRange -> {{-5, 5}, {0, 6}}];
 eye1 = Rectangle[{0.2, 0.25}, {0.4, 0.5}];
 eye2 = Rectangle[{0.6, 0.25}, {0.8, 0.5}];
 $g2 = Graphics[{Yellow, eye1, Yellow, eye2}];
+$g4 = Graphics[Rectangle[{0,0},{0,0}]];
 ]
 
 
