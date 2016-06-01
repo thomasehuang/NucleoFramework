@@ -42,68 +42,6 @@ $writeCode="";
 ]
 
 
-SetAngles[x_]:=
-Module[{},
-(*Initialize values*)
-$numservos = Length[x];
-$angles = Array[0&, $numservos];
-$servocubes = Array[0&, $numservos + 1];
-rectstats = Array[0&, $numservos + 1];
-angletext = Array[0&, $numservos];
-
-(*Check if angles are valid*)
-error = False;
-Do[
-If[x[[i]] > 45 || x[[i]] < -45, error = True, $angles[[i]] = x[[i]]];
-,{i,$numservos}];
-
-(*====================Servo orientation graph code start====================*)
-Print["Orientation: "];
-Do[
- $servocubes[[i]] = Rectangle[{0, (i - 1) * 4}, {1, (i - 1) * 4 + 3}];
-, {i, $numservos + 1}];
-Do[
- rectstats[[i]] = {0.5, 3.5 + (i - 1) * 4};
-, {i, $numservos + 1}];
-
-Do[
- Do[
-  $servocubes[[j]] = Rotate[$servocubes[[j]], -$angles[[i - 1]]Degree, rectstats[[i - 1]]];
-  rectstats[[j]] = RotationTransform[-$angles[[i - 1]]Degree, rectstats[[i - 1]]][rectstats[[j]]];
-  , {j, i, $numservos + 1, 1}];
- , {i, 2, $numservos + 1, 1}];
-servograph = Graphics[{RGBColor[0, 0, 0], $servocubes},Background -> White,PlotRange -> {{-1 * $numservos * 5, $numservos * 5}, {0, $numservos * 6}}];
-
-(*Eyes and tail for the snake*)
-eye1 = Rectangle[{0.2, 0.25}, {0.4, 0.5}];
-eye2 = Rectangle[{0.6, 0.25}, {0.8, 0.5}];
-g2 = Graphics[{Yellow, eye1, Yellow, eye2}];
-vec = Normalize[rectstats[[$numservos + 1]] - rectstats[[$numservos]]];
-tail = Line[{rectstats[[$numservos + 1]], rectstats[[$numservos + 1]] + vec}];
-g3 = Graphics[{Black, Thick, tail}];
-
-(*Angles display with text*)
-Do[
- If[$angles[[i]] < 0, angletext[[i]] = Text[$angles[[i]], rectstats[[i]], {0, 0}], angletext[[i]] = Text[$angles[[i]], rectstats[[i]], {0, 0}]];
-, {i, $numservos}];
-g4 = Graphics[{Red, angletext}];
-
-Print[Show[servograph, g2, g3, g4]];
-(*====================Servo orientation graph code end====================*)
-
-(*Set up string to send through serial*)
-(*Format: "numservos, angle1, angle2, anglen;"*)
-str=ToString/@x;
-str[[$numservos]] = str[[$numservos]] <> ";";
-sendstring = StringJoin[Riffle[Join[{"s" <> ToString[$numservos]},str],","]];
-If[error,Print["Invalid angles"],DeviceWrite[$dev, sendstring]];
-Print["Sending: "];
-Print[sendstring];
-Pause[1];
-$cangraph = True;
-]
-
-
 EnableGyr[]:=Dynamic[Labeled[ListLinePlot[{$gGXList, $gGYList, $gGZList}, PlotRange->All,PlotRangeClipping->False, ImageSize->Medium, PlotLegends->{"gx","gy", "gz"}],"gyroscope"],UpdateInterval->1]
 
 
