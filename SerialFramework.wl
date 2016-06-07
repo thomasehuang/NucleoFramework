@@ -10,6 +10,7 @@ BeginPackage["SerialFramework`"];
 ConnectDevice::usage = "Connects to Nucleo through Serial";
 WriteMessage::usage = "Writes a message to Nucleo";
 ReadMessage::usage = "Reads a message from Nucleo";
+DisconnectDevice::usage = "Disconnects device";
 
 
 Begin["`Private`"];
@@ -17,8 +18,7 @@ Begin["`Private`"];
 
 ConnectDevice[dev_]:=
 Module[{},
-$dev = DeviceOpen["Serial", dev];
-DeviceConfigure[$dev, "BaudRate" -> 230400];
+$dev = DeviceOpen["Serial", {dev, "BaudRate" -> 230400}];
 Return[$dev]];
 
 
@@ -39,6 +39,9 @@ Module[{},
  reader=FromCharacterCode[DeviceReadBuffer[$dev]];
  Return[reader];
 ]
+
+
+DisconnectDevice[]:=DeviceClose[$dev];
 
 
 End[];
