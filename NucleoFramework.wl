@@ -8,7 +8,7 @@ BeginPackage["NucleoFramework`"];
 
 
 Init::usage="Initializes values";
-ConnectNucleo::usage="Connect Nucleo";
+ConnectNucleo::usage="Connects to Nucleo device through Serial";
 ConstructIMUGUI::usage="Constructs user interface for IMU";
 ConstructServoGUI::usage="Constructs user interface for Servo";
 ReadSerialData::usage="Reads data through serial";
@@ -23,7 +23,10 @@ SetAngles::usage="Sets angles for servos";
 Begin["`Private`"];
 
 
-ConnectNucleo[x_]:=Return[$dev=DeviceOpen["Serial", x]];
+Needs["SerialFramework`"]
+
+
+ConnectNucleo[x_]:=SerialFramework`ConnectDevice["/dev/cu.usbmodem1413"];
 
 
 Init[]:=
@@ -185,8 +188,8 @@ Button["Enable Angles",
 ],
 Panel[Grid[{{Style["Plot",Bold],SpanFromLeft},{"Number of Servos:",InputField[Dynamic[numservosstring],String]},{"Angles:",InputField[Dynamic[anglestring],String]},{Button["Send",
  $numservos = ToExpression[numservosstring];
- $sendstring = "1.0."<>ToString[$numservos]<>","<>anglestring<>";";
- $angles = ToExpression/@StringSplit[anglestring, ","];
+ $sendstring = ToString[$numservos]<>","<>anglestring;
+ SerialFramework`WriteMessage[$sendstring];
  SetAngles[];
  If[$runprogram,$anglesflag=True,DeviceWrite[$dev,$sendstring]];
 ]}}]],
@@ -211,10 +214,7 @@ Module[{},
 	        $anglesflag=False;
 	    ]];
         If[$IMUflag,Module[{},
-        	DeviceReadBuffer[$dev];
-        	DeviceWrite[$dev, "1.1;"];
-			Pause[0.2];
-            reader=FromCharacterCode[DeviceReadBuffer[$dev]];
+        	reader = SerialFramework`ReadMessage["0"];
             readerarr=StringSplit[reader];
             If[Length[readerarr]!=26,Continue[]];
         	If[$IMUgraphflag,Module[{},
