@@ -188,8 +188,8 @@ Button["Enable Angles",
 ],
 Panel[Grid[{{Style["Plot",Bold],SpanFromLeft},{"Number of Servos:",InputField[Dynamic[numservosstring],String]},{"Angles:",InputField[Dynamic[anglestring],String]},{Button["Send",
  $numservos = ToExpression[numservosstring];
- $sendstring = ToString[$numservos]<>","<>anglestring;
- SerialFramework`WriteMessage[$sendstring];
+ $angles = ToExpression/@StringSplit[x,","];
+ SerialFramework`WriteMessage[$angles];
  SetAngles[];
  If[$runprogram,$anglesflag=True,DeviceWrite[$dev,$sendstring]];
 ]}}]],
