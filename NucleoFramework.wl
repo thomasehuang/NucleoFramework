@@ -26,7 +26,7 @@ Begin["`Private`"];
 Needs["SerialFramework`"]
 
 
-ConnectNucleo[x_]:=SerialFramework`ConnectDevice["/dev/cu.usbmodem1413"];
+ConnectNucleo[]:=SerialFramework`ConnectDevice["/dev/cu.usbmodem1413", 115200];
 
 
 Init[]:=
@@ -188,10 +188,14 @@ Button["Enable Angles",
 ],
 Panel[Grid[{{Style["Plot",Bold],SpanFromLeft},{"Number of Servos:",InputField[Dynamic[numservosstring],String]},{"Angles:",InputField[Dynamic[anglestring],String]},{Button["Send",
  $numservos = ToExpression[numservosstring];
- $angles = ToExpression/@StringSplit[x,","];
- SerialFramework`WriteMessage[$angles];
+ $angles = ToExpression/@StringSplit[anglestring,","];
+ writeangles = Array[0&, $numservos];
+ Do[
+  writeangles[[i]] = $angles[[i]] + 90;
+ , {i, 1, $numservos}]
+ SerialFramework`WriteMessage[writeangles];
  SetAngles[];
- If[$runprogram,$anglesflag=True,DeviceWrite[$dev,$sendstring]];
+ If[$runprogram,$anglesflag=True,WriteMessage[$sendstring]];
 ]}}]],
 Button["Stop",
  $runprogram = False;

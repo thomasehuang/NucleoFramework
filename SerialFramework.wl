@@ -16,9 +16,9 @@ DisconnectDevice::usage = "Disconnects device";
 Begin["`Private`"];
 
 
-ConnectDevice[dev_]:=
+ConnectDevice[dev_, baud_: 9600]:=
 Module[{},
-$dev = DeviceOpen["Serial", {dev, "BaudRate" -> 230400}];
+$dev = DeviceOpen["Serial", {dev, "BaudRate" -> baud}];
 $startbit = 124;
 Return[$dev]];
 
@@ -60,10 +60,11 @@ Module[{},
  DeviceWrite[$dev, arg];
 
  sum = $startbit + id + len + func + arg;
+ If[sum > 255, sum = sum - 256;,];
  DeviceWrite[$dev, sum];
 
- Pause[0.2];
- reader=FromCharacterCode[DeviceReadBuffer[$dev]];
+ Pause[0.015];
+ reader = FromCharacterCode[DeviceReadBuffer[$dev]];
  Return[reader];
 ]
 
