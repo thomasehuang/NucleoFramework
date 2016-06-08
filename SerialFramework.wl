@@ -40,7 +40,7 @@ Module[{},
   sum = sum + msg[[i]];
  , {i, 1, Length[msg]}]
 
- If[sum > 255, sum = sum - 256;,];
+ While[sum > 255, sum = sum - 256;];
  DeviceWrite[$dev, sum];
 ]
 
@@ -60,7 +60,7 @@ Module[{},
  DeviceWrite[$dev, arg];
 
  sum = $startbit + id + len + func + arg;
- If[sum > 255, sum = sum - 256;,];
+ While[sum > 255, sum = sum - 256;];
  DeviceWrite[$dev, sum];
 
  Pause[0.015];
