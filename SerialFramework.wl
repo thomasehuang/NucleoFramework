@@ -23,7 +23,7 @@ $startbit = 124;
 Return[$dev]];
 
 
-WriteMessage[msg_]:=
+WriteMessage[arg_, msg_]:=
 Module[{},
  id = 1;
  len = Length[msg] + 2;
@@ -33,8 +33,9 @@ Module[{},
  DeviceWrite[$dev, id];
  DeviceWrite[$dev, len];
  DeviceWrite[$dev, func];
+ DeviceWrite[$dev, arg];
 
- sum = $startbit + id + len + func;
+ sum = $startbit + id + len + func + arg;
  Do[
   DeviceWrite[$dev, msg[[i]]];
   sum = sum + msg[[i]];

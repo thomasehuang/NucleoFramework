@@ -194,7 +194,7 @@ Panel[Grid[{{Style["Plot",Bold],SpanFromLeft},{"Number of Servos:",InputField[Dy
   writeangles[[i]] = $angles[[i]] + 90;
  , {i, 1, $numservos}]
  SetAngles[];
- If[$runprogram,$anglesflag=True,SerialFramework`WriteMessage[writeangles]];
+ If[$runprogram,$anglesflag=True,SerialFramework`WriteMessage[0, writeangles]];
 ]}}]],
 Button["Stop",
  $runprogram = False;
@@ -213,7 +213,7 @@ Module[{},
 	$runprogram = True;
 	While[$runprogram,
 		If[$anglesflag,Module[{},
-        	SerialFramework`WriteMessage[writeangles];
+        	SerialFramework`WriteMessage[0, writeangles];
 	        $anglesflag=False;
 	    ]];
         If[$IMUflag,Module[{},
