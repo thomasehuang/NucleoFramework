@@ -18,59 +18,60 @@ Begin["`Private`"];
 
 ConnectDevice[dev_, baud_: 9600]:=
 Module[{},
-$dev = DeviceOpen["Serial", {dev, "BaudRate" -> baud}];
 $startbit = 124;
-Return[$dev]];
+Return[DeviceOpen["Serial", {dev, "BaudRate" -> baud}]];
+];
 
 
-WriteMessage[arg_, msg_]:=
+WriteMessage[dev_, arg_: 0, msg_]:=
 Module[{},
  id = 1;
- len = Length[msg] + 2;
+ numparam = Length[msg] + 1;
+ len = numparam + 2;
  func = 0;
 
- DeviceWrite[$dev, $startbit];
- DeviceWrite[$dev, id];
- DeviceWrite[$dev, len];
- DeviceWrite[$dev, func];
- DeviceWrite[$dev, arg];
+ DeviceWrite[dev, $startbit];
+ DeviceWrite[dev, id];
+ DeviceWrite[dev, len];
+ DeviceWrite[dev, func];
+ DeviceWrite[dev, arg];
 
  sum = $startbit + id + len + func + arg;
  Do[
-  DeviceWrite[$dev, msg[[i]]];
+  DeviceWrite[dev, msg[[i]]];
   sum = sum + msg[[i]];
  , {i, 1, Length[msg]}]
 
  While[sum > 255, sum = sum - 256;];
- DeviceWrite[$dev, sum];
+ DeviceWrite[dev, sum];
 ]
 
 
-ReadMessage[arg_: 0]:=
+ReadMessage[dev_, arg_: 0]:=
 Module[{},
- DeviceReadBuffer[$dev];
+ DeviceReadBuffer[dev];
 
  id = 1;
  len = 3;
  func = 1;
 
- DeviceWrite[$dev, $startbit];
- DeviceWrite[$dev, id];
- DeviceWrite[$dev, len];
- DeviceWrite[$dev, func];
- DeviceWrite[$dev, arg];
+ DeviceWrite[dev, $startbit];
+ DeviceWrite[dev, id];
+ DeviceWrite[dev, len];
+ DeviceWrite[dev, func];
+ DeviceWrite[dev, arg];
 
  sum = $startbit + id + len + func + arg;
  While[sum > 255, sum = sum - 256;];
- DeviceWrite[$dev, sum];
+ DeviceWrite[dev, sum];
 
  Pause[0.015];
- reader = FromCharacterCode[DeviceReadBuffer[$dev]];
+ reader = FromCharacterCode[DeviceReadBuffer[dev]];
  Return[reader];
 ]
 
 
-DisconnectDevice[]:=DeviceClose[$dev];
+DisconnectDevice[dev_]:=DeviceClose[dev];
 
 
 End[];

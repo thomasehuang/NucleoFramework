@@ -10,35 +10,67 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[      1592,         56]
-NotebookOptionsPosition[      1235,         39]
-NotebookOutlinePosition[      1588,         55]
-CellTagsIndexPosition[      1545,         52]
+NotebookDataLength[      3341,         89]
+NotebookOptionsPosition[      2943,         71]
+NotebookOutlinePosition[      3297,         87]
+CellTagsIndexPosition[      3254,         84]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
 Cell[BoxData[
  RowBox[{"Needs", "[", "\"\<SerialFramework`\>\"", "]"}]], "Input",
- CellChangeTimes->{{3.67434575140795*^9, 3.6743457596454277`*^9}}],
+ CellChangeTimes->{{3.67434575140795*^9, 3.6743457596454277`*^9}, {
+  3.674364701431677*^9, 3.674364702227668*^9}}],
 
 Cell[BoxData[
- RowBox[{"SerialFramework`ConnectDevice", "[", "\"\</dev/cu.usbmodem1413\>\"",
-   "]"}]], "Input",
- CellChangeTimes->{{3.674346012828786*^9, 3.6743460324530373`*^9}}],
+ RowBox[{"dev", "=", 
+  RowBox[{"SerialFramework`ConnectDevice", "[", 
+   RowBox[{"\"\</dev/cu.usbmodem1413\>\"", ",", "115200"}], "]"}]}]], "Input",\
+
+ CellChangeTimes->{{3.674346012828786*^9, 3.6743460324530373`*^9}, {
+  3.674364038604137*^9, 3.6743640458996143`*^9}, {3.674962606768725*^9, 
+  3.674962607247889*^9}}],
 
 Cell[BoxData[
- RowBox[{"SerialFramework`ReadMessage", "[", "0", "]"}]], "Input",
- CellChangeTimes->{{3.674345762502069*^9, 3.674345778366593*^9}}],
+ RowBox[{"SerialFramework`ReadMessage", "[", "4", "]"}]], "Input",
+ CellChangeTimes->{{3.674345762502069*^9, 3.674345778366593*^9}, {
+  3.674364486069137*^9, 3.674364487803617*^9}, {3.674365112410984*^9, 
+  3.6743651172337437`*^9}, {3.67436554328265*^9, 3.674365546450164*^9}, {
+  3.6743657971292553`*^9, 3.6743657999849052`*^9}, {3.674365933889923*^9, 
+  3.6743659380280247`*^9}, {3.674366009674697*^9, 3.674366022968886*^9}, {
+  3.674366070255827*^9, 3.674366073415049*^9}, {3.674366109223692*^9, 
+  3.674366129782281*^9}}],
 
 Cell[BoxData[
  RowBox[{"SerialFramework`WriteMessage", "[", 
-  RowBox[{"{", 
-   RowBox[{"-", "45"}], "}"}], "]"}]], "Input",
- CellChangeTimes->{{3.674351078732069*^9, 3.674351105546268*^9}}]
+  RowBox[{"dev", ",", "1", ",", 
+   RowBox[{"{", 
+    RowBox[{"180", ",", "180", ",", "180"}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.674351078732069*^9, 3.674351105546268*^9}, {
+   3.674363794823268*^9, 3.6743638224676657`*^9}, 3.674364013958434*^9, {
+   3.674364477501335*^9, 3.6743644805797577`*^9}, {3.67436559004104*^9, 
+   3.674365596464279*^9}, {3.674365735148932*^9, 3.674365737155468*^9}, {
+   3.674365961171166*^9, 3.6743659779544773`*^9}, {3.67436613805797*^9, 
+   3.6743661390115967`*^9}, {3.6743662451702147`*^9, 3.674366247312737*^9}, {
+   3.674366298832193*^9, 3.674366313716508*^9}, {3.674868515242298*^9, 
+   3.674868516000515*^9}, {3.674868912466329*^9, 3.6748689191123133`*^9}, {
+   3.674962665533804*^9, 3.674962666763887*^9}}],
+
+Cell[BoxData[
+ RowBox[{"While", "[", 
+  RowBox[{
+   RowBox[{"1", "\[Equal]", "1"}], ",", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Print", "[", 
+     RowBox[{"SerialFramework`ReadMessage", "[", "2", "]"}], "]"}], ";"}]}], 
+  "\[IndentingNewLine]", "]"}]], "Input",
+ CellChangeTimes->{{3.674868522144217*^9, 3.674868591675853*^9}, {
+  3.674868637346765*^9, 3.674868667616848*^9}, {3.674868708638665*^9, 
+  3.674868807775057*^9}, {3.6749568323684063`*^9, 3.674956832444807*^9}}]
 },
 WindowSize->{723, 751},
-WindowMargins->{{4, Automatic}, {Automatic, 4}},
+WindowMargins->{{35, Automatic}, {Automatic, 0}},
 FrontEndVersion->"10.4 for Mac OS X x86 (32-bit, 64-bit Kernel) (April 11, \
 2016)",
 StyleDefinitions->"Default.nb"
@@ -54,13 +86,12 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[558, 20, 148, 2, 28, "Input"],
-Cell[709, 24, 180, 3, 28, "Input"],
-Cell[892, 29, 146, 2, 28, "Input"],
-Cell[1041, 33, 190, 4, 28, "Input"]
+Cell[558, 20, 197, 3, 28, "Input"],
+Cell[758, 25, 333, 7, 28, "Input"],
+Cell[1094, 34, 539, 8, 28, "Input"],
+Cell[1636, 44, 817, 13, 28, "Input"],
+Cell[2456, 59, 483, 10, 63, "Input"]
 }
 ]
 *)
-
-(* End of internal cache information *)
 
