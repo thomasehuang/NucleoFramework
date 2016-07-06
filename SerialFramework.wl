@@ -23,20 +23,19 @@ Return[DeviceOpen["Serial", {dev, "BaudRate" -> baud}]];
 ];
 
 
-WriteMessage[dev_, arg_: 0, msg_]:=
+WriteMessage[dev_, boardid_: 1, arg_: 0, msg_]:=
 Module[{},
- id = 1;
  numparam = Length[msg] + 1;
  len = numparam + 2;
  func = 0;
 
  DeviceWrite[dev, $startbit];
- DeviceWrite[dev, id];
+ DeviceWrite[dev, boardid];
  DeviceWrite[dev, len];
  DeviceWrite[dev, func];
  DeviceWrite[dev, arg];
 
- sum = $startbit + id + len + func + arg;
+ sum = $startbit + boardid + len + func + arg;
  Do[
   DeviceWrite[dev, msg[[i]]];
   sum = sum + msg[[i]];
@@ -47,26 +46,32 @@ Module[{},
 ]
 
 
-ReadMessage[dev_, arg_: 0]:=
+ReadMessage[dev_, boardid_: 1, arg_: 0]:=
 Module[{},
  DeviceReadBuffer[dev];
 
- id = 1;
  len = 3;
  func = 1;
 
  DeviceWrite[dev, $startbit];
- DeviceWrite[dev, id];
+ DeviceWrite[dev, boardid];
  DeviceWrite[dev, len];
  DeviceWrite[dev, func];
  DeviceWrite[dev, arg];
 
- sum = $startbit + id + len + func + arg;
+ sum = $startbit + boardid + len + func + arg;
  While[sum > 255, sum = sum - 256;];
  DeviceWrite[dev, sum];
 
- Pause[0.015];
- reader = FromCharacterCode[DeviceReadBuffer[dev]];
+(* Pause[0.001];*)
+ (*reader = FromCharacterCode[DeviceReadBuffer[dev]];*)
+ 
+ token = "1";
+ reader = "";
+ While[token!=";",
+  token = FromCharacterCode[DeviceRead[dev]];
+  If[token==";", Break;,reader = reader <> ToString[token];];
+ ];
  Return[reader];
 ]
 

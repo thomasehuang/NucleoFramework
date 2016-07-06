@@ -5,6 +5,8 @@ BeginPackage["IMUFilter`"];
 
 IMUInit::usage="Initializes values.";
 IMUFilter::usage="Calculates Roll, Pitch, Yaw with input from IMU.";
+GyroCalibrate::usage="Calibrates the Gyroscope by calculating the average.";
+GetOffsets::usage="Returns the offsets.";
 
 
 Begin["Private`"];
@@ -13,14 +15,19 @@ Begin["Private`"];
 IMUInit[]:=Module[{},
 $q0=1.0;$q1=0.0;$q2=0.0;$q3=0.0;
 $exInt=0.0;$eyInt=0.0;$ezInt=0.0;
+$gyroDataX={};$gyroOffsetX=0.0;$gyroDataY={};$gyroOffsetY=0.0;$gyroDataZ={};$gyroOffsetZ=0.0;
 ];
 
 
 IMUFilter[dt_,gx_,gy_,gz_,ax_,ay_,az_,mx_,my_,mz_]:=Module[{},
+gxc=gx-$gyroOffsetX;
+gyc=gy-$gyroOffsetY;
+gzc=gz-$gyroOffsetZ;
+
 (*Gyro in radians per second*)
-radgx=gx*Pi/180;
-radgy=gy*Pi/180;
-radgz=gz*Pi/180;
+radgx=gxc*Pi/180;
+radgy=gyc*Pi/180;
+radgz=gzc*Pi/180;
 
 q=AHRSUpdate[dt/2,radgx,radgy,radgz,ax,ay,az,mx,my,mz];
 q0=q[[1]];q1=q[[2]];q2=q[[3]];q3=q[[4]];
@@ -116,6 +123,19 @@ $q3=q33;
 
 Return[{$q0,$q1,$q2,$q3}];
 ];
+
+
+GyroCalibrate[gx_,gy_,gz_]:=Module[{},
+AppendTo[$gyroDataX,gx];AppendTo[$gyroDataY,gy];AppendTo[$gyroDataZ,gz];
+$gyroOffsetX=Total[$gyroDataX]/Length[$gyroDataX];
+$gyroOffsetY=Total[$gyroDataY]/Length[$gyroDataY];
+$gyroOffsetZ=Total[$gyroDataZ]/Length[$gyroDataZ];
+];
+
+
+GetOffsets[]:=Module[{},
+Return[{$gyroOffsetX,$gyroOffsetY,$gyroOffsetZ}];
+]
 
 
 End[];

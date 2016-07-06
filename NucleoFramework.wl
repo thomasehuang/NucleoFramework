@@ -26,7 +26,7 @@ Begin["`Private`"];
 Needs["SerialFramework`"]
 
 
-ConnectNucleo[]:=SerialFramework`ConnectDevice["/dev/cu.usbmodem1413", 115200];
+ConnectNucleo[]:=$dev=SerialFramework`ConnectDevice["/dev/cu.usbmodem1413", 115200];
 
 
 Init[]:=
@@ -194,7 +194,7 @@ Panel[Grid[{{Style["Plot",Bold],SpanFromLeft},{"Number of Servos:",InputField[Dy
   writeangles[[i]] = $angles[[i]] + 90;
  , {i, 1, $numservos}]
  SetAngles[];
- If[$runprogram,$anglesflag=True,SerialFramework`WriteMessage[0, writeangles]];
+ If[$runprogram,$anglesflag=True,SerialFramework`WriteMessage[$dev, 1, 1, writeangles]];
 ]}}]],
 Button["Stop",
  $runprogram = False;
@@ -213,38 +213,43 @@ Module[{},
 	$runprogram = True;
 	While[$runprogram,
 		If[$anglesflag,Module[{},
-        	SerialFramework`WriteMessage[0, writeangles];
+        	SerialFramework`WriteMessage[$dev, 1, 1, writeangles];
 	        $anglesflag=False;
 	    ]];
         If[$IMUflag,Module[{},
-        	reader = SerialFramework`ReadMessage["0"];
-            readerarr=StringSplit[reader];
-            If[Length[readerarr]!=26,Continue[]];
         	If[$IMUgraphflag,Module[{},
-				$roll=ToExpression[Part[readerarr,22]];
-				$pitch=ToExpression[Part[readerarr,24]];
-				$yaw=ToExpression[Part[readerarr,26]];
+				reader = SerialFramework`ReadMessage[$dev, 1, 5];
+				readerarr=StringSplit[reader];
+				$roll=ToExpression[Part[readerarr,1]];
+				$pitch=ToExpression[Part[readerarr,2]];
+				$yaw=ToExpression[Part[readerarr,3]];
         	]];
             If[$gyrflag,Module[{},
-            	gGX=ToExpression[Part[readerarr, 4]];
-				gGY=ToExpression[Part[readerarr, 6]];
-                gGZ=ToExpression[Part[readerarr, 8]];
-                AppendTo[$gGXList,gGX];
-                AppendTo[$gGYList,gGY];
-                AppendTo[$gGZList,gGZ];
+				reader = SerialFramework`ReadMessage[$dev, 1, 2];
+				readerarr=StringSplit[reader];
+				gGX=ToExpression[Part[readerarr, 1]];
+				gGY=ToExpression[Part[readerarr, 2]];
+				gGZ=ToExpression[Part[readerarr, 3]];
+				AppendTo[$gGXList,gGX];
+				AppendTo[$gGYList,gGY];
+				AppendTo[$gGZList,gGZ];
             ]];
             If[$accflag,Module[{},
-            	gAX=ToExpression[Part[readerarr, 10]];
-                gAY=ToExpression[Part[readerarr, 12]];
-                gAZ=ToExpression[Part[readerarr, 14]];
-                AppendTo[$gAXList,gAX];
-                AppendTo[$gAYList,gAY];
-                AppendTo[$gAZList,gAZ];
+				reader = SerialFramework`ReadMessage[$dev, 1, 3];
+				readerarr=StringSplit[reader];
+				gAX=ToExpression[Part[readerarr, 1]];
+				gAY=ToExpression[Part[readerarr, 2]];
+				gAZ=ToExpression[Part[readerarr, 3]];
+				AppendTo[$gAXList,gAX];
+				AppendTo[$gAYList,gAY];
+				AppendTo[$gAZList,gAZ];
         	]];
         	If[$magflag,Module[{},
-            	gMX=ToExpression[Part[readerarr, 16]];
-                gMY=ToExpression[Part[readerarr, 18]];
-                gMZ=ToExpression[Part[readerarr, 20]];
+				reader = SerialFramework`ReadMessage[$dev, 1, 4];
+				readerarr=StringSplit[reader];
+            	gMX=ToExpression[Part[readerarr, 1]];
+                gMY=ToExpression[Part[readerarr, 2]];
+                gMZ=ToExpression[Part[readerarr, 3]];
                 AppendTo[$gMXList,gMX];
                 AppendTo[$gMYList,gMY];
                 AppendTo[$gMZList,gMZ];
