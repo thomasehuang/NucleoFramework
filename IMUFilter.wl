@@ -16,6 +16,9 @@ IMUInit[]:=Module[{},
 $q0=1.0;$q1=0.0;$q2=0.0;$q3=0.0;
 $exInt=0.0;$eyInt=0.0;$ezInt=0.0;
 $gyroDataX={};$gyroOffsetX=0.0;$gyroDataY={};$gyroOffsetY=0.0;$gyroDataZ={};$gyroOffsetZ=0.0;
+$acceDataX={};$acceOffsetX=0.0;$acceScaleX=0.0;
+$acceDataY={};$acceOffsetY=0.0;$acceScaleY=0.0;
+$acceDataZ={};$acceOffsetZ=0.0;$acceScaleZ=0.0;
 ];
 
 
@@ -23,13 +26,16 @@ IMUFilter[dt_,gx_,gy_,gz_,ax_,ay_,az_,mx_,my_,mz_]:=Module[{},
 gxc=gx-$gyroOffsetX;
 gyc=gy-$gyroOffsetY;
 gzc=gz-$gyroOffsetZ;
+axc=(ax-$acceOffsetX)*$acceScaleX;
+ayc=(ay-$acceOffsetY)*$acceScaleY;
+ayz=(az-$acceOffsetZ)*$acceScaleZ;
 
 (*Gyro in radians per second*)
 radgx=gxc*Pi/180;
 radgy=gyc*Pi/180;
 radgz=gzc*Pi/180;
 
-q=AHRSUpdate[dt/2,radgx,radgy,radgz,ax,ay,az,mx,my,mz];
+q=AHRSUpdate[dt/2,radgx,radgy,radgz,axc,ayc,azc,mx,my,mz];
 q0=q[[1]];q1=q[[2]];q2=q[[3]];q3=q[[4]];
 
 rangle={0.0,0.0,0.0};
@@ -131,6 +137,29 @@ $gyroOffsetX=Total[$gyroDataX]/Length[$gyroDataX];
 $gyroOffsetY=Total[$gyroDataY]/Length[$gyroDataY];
 $gyroOffsetZ=Total[$gyroDataZ]/Length[$gyroDataZ];
 ];
+
+
+AcceCalibrate[ax_,ay_,az_]:=Module[{},
+AppendTo[$acceDataX,ax];AppendTo[$acceDataY,ay];AppendTo[$acceDataZ,az];
+rangeX=Max[$acceDataX]-Min[$acceDataX];$acceOffsetX=rangeX/2;
+rangeY=Max[$acceDataY]-Min[$acceDataY];$acceOffsetY=rangeY/2;
+rangeZ=Max[$acceDataZ]-Min[$acceDataZ];$acceOffsetZ=rangeZ/2;
+If[rangeX>rangeY&&rangeX>rangeZ,
+$acceScaleX=rangeX/rangeX;
+$acceScaleX=rangeX/rangeY;
+$acceScaleX=rangeX/rangeZ;
+];
+If[rangeY>rangeX&&rangeY>rangeZ,
+$acceScaleX=rangeY/rangeX;
+$acceScaleX=rangeY/rangeY;
+$acceScaleX=rangeY/rangeZ;
+];
+If[rangeZ>rangeX&&rangeZ>rangeY,
+$acceScaleX=rangeZ/rangeX;
+$acceScaleX=rangeZ/rangeY;
+$acceScaleX=rangeZ/rangeZ;
+];
+]
 
 
 GetOffsets[]:=Module[{},
