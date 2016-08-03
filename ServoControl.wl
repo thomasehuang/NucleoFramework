@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-BeginPackage["ServoControl"];
+BeginPackage["ServoControl`"];
 
 
 Setup::usage="Setup all the variables.";
@@ -24,8 +24,9 @@ For[j=0,j<$numServos,j++,Module[{},
 $rad[[j]]=$FRE/1000*2*Pi*$time[[j]]+$PD*j*Pi/180.0;
 $theta[[j]]=$AMP*Sin[$rad[[j]]]+$servoCenter;
 ]];
-(*write the theta angles to each servo here*)
-
+(*write the theta/radian angles to each servo here*)
+$dev=SerialFramework`ConnectDevice["/dev/cu,usbmodem1413",115200];
+WriteMessage[$dev, 1, 1, $theta];
 (*********************************************)
 RunScheduledTask[Module[{},
 For[i=0,i<$numServos,i++,Module[{},
@@ -48,8 +49,8 @@ $rad[[j]]=$FRE/1000*2*Pi*$time[[j]]+$PD*j*Pi/180.0;
 $theta[[j]]=$AMP*Sin[$rad[[j]]]+$servoCenter;
 ];
 ];
-(*write the theta angles to each servo here*)
-
+(*write the theta/radian angles to each servo here*)
+WriteMessage[$dev, 1, 1, $theta];
 (*********************************************)
 ];
 
